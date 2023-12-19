@@ -1,10 +1,11 @@
 let configurationFileName = 'newNathan.json'
+let secrets = importModule('Secrets');
 const usePersistedConfiguration = false; 
 const overwritePersistedConfig = true;
 class Configuration {
-    hbServiceMachineBaseUrl = 'https://nathanjohnthedom.com:8581';
-    userName = 'NathanJohn';
-    password = 'Oldhall5458!';
+    hbServiceMachineBaseUrl = secrets.HBURL();
+    userName = secrets.HBUsername();
+    password = secrets.HBPassword();
     notificationEnabled = true;
     notificationIntervalInDays = 0.5;
     disableStateBackToNormalNotifications = false;

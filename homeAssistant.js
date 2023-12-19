@@ -7,12 +7,13 @@ Script.complete();
 async function createWidget(items) {
 const widget = new ListWidget();
 let modules = importModule('Functions');
+let secrets = importModule('Secrets');
 let imageUrl = await background();
 widget.backgroundImage = await loadImage(imageUrl);
-let url = "https://nathanjohnthedom.com:8123/api/states"
+let url = secrets.HAURL();
 let req = new Request(url);
     req.timeoutInterval = 55;
-    let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIwNjZiMDAxNDNiMGY0YzEwYTQwYjE2MmM1YjQwNGRhNSIsImlhdCI6MTY3OTk0MDE5MSwiZXhwIjoxOTk1MzAwMTkxfQ.9fJg9R65PUZ7GTvYWA_jLrtKN_7jhhR41Bz2lodzHT4';
+    let token = secrets.HAToken();
     let headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
