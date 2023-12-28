@@ -2,148 +2,102 @@
  * Configurations
  *************************************/
 
-// NOTE: This script uses the Cache script (https://github.com/yaylinda/scriptable/blob/main/Cache.js)
-// Make sure to add the Cache script in Scriptable as well!
-
-// NOTE 2: When setting up the widget, make sure to put something (anything) in the "Widget Params" field.
-
-// This is the name of the directory (under Scriptable) in iCloud, to store the daily log files.
 const DAILY_LOG_CACHE_NAME = 'DailyLogs';
-
-// Text colors to display for the various field categories (default: white)
 const CATEGORY_CONFIGURATIONS = {
-  // TODO - Replace me with your own data!
   SAMPLE_CAT_1: {
-    color: '#7AE7B9',
+    color: '#10FC0C',
+    name: 'Health',
   },
   SAMPLE_CAT_2: {
-    color: '#5BD2F0',
+    color: '#FFCCCC',
+    name: 'Coding - Work',
   },
   SAMPLE_CAT_3: {
-    color: '#FF6663',
+    color: '#CCCCFF',
+    name: 'Coding - Personal',
   },
 };
 
-// Fields to collect data for in the Alert
-// Alert shows up when you click on the Widget
-const finalFields = [FIELDS, FIELDS2, FIELDS3]
 const FIELDS = [
   { label: 'Enough Sleep', category: 'SAMPLE_CAT_1' },
   { label: 'Shower', category: 'SAMPLE_CAT_1' },
   { label: 'Exercised', category: 'SAMPLE_CAT_1' },
-  { label: 'Vitamins', category: 'SAMPLE_CAT_1' },
-];
-
+  { label: 'Medication', category: 'SAMPLE_CAT_1' },
+  ];
 const FIELDS2 = [
-  { label: 'Vegetables', category: 'SAMPLE_CAT_2' },
-  { label: 'Caffeine', category: 'SAMPLE_CAT_2' },
-];
-
+  { label: 'NJTD', category: 'SAMPLE_CAT_2' },
+  { label: 'Job Hunt', category: 'SAMPLE_CAT_2' },];
 const FIELDS3 = [
-  { label: 'Happy', category: 'SAMPLE_CAT_3' },
-  { label: 'Sad', category: 'SAMPLE_CAT_3' },
+  { label: 'RPi 5', category: 'SAMPLE_CAT_3' },
+  { label: 'Mango Pi', category: 'SAMPLE_CAT_3' },
 ];
 
-const finalFIELDS_TO_AGGREGATE = [FIELDS_TO_AGGREGATE, FIELDS_TO_AGGREGATE2, FIELDS_TO_AGGREGATE3]
 const FIELDS_TO_AGGREGATE = [
-  { label: 'Enough Sleep', category: 'SAMPLE_CAT_1' },
+   { label: 'Enough Sleep', category: 'SAMPLE_CAT_1' },
   { label: 'Shower', category: 'SAMPLE_CAT_1' },
   { label: 'Exercised', category: 'SAMPLE_CAT_1' },
-  { label: 'Vitamins', category: 'SAMPLE_CAT_1' },
-];
-
+  { label: 'Medication', category: 'SAMPLE_CAT_1' },];
 const FIELDS_TO_AGGREGATE2 = [
-  { label: 'Vegetables', category: 'SAMPLE_CAT_2' },
-  { label: 'Caffeine', category: 'SAMPLE_CAT_2' },
-];
-
+  { label: 'NJTD', category: 'SAMPLE_CAT_2' },
+  { label: 'Job Hunt', category: 'SAMPLE_CAT_2' },];
 const FIELDS_TO_AGGREGATE3 = [
-  { label: 'Happy', category: 'SAMPLE_CAT_3' },
-  { label: 'Sad', category: 'SAMPLE_CAT_3' },
+  { label: 'RPi 5', category: 'SAMPLE_CAT_3' },
+  { label: 'Mango Pi', category: 'SAMPLE_CAT_3' },
 ];
-
-// Date format for the Alert title. Ex: "Fri, Nov 6"
 const DATE_TEXT_FORMAT = new Intl.DateTimeFormat('en-GB', {
   weekday: 'short',
   day: 'numeric', 
   month: 'short', 
 });
-
-// Date format for the data grid. Showing the DOW as a letter.
 const SHORT_DATE_FORMAT = new Intl.DateTimeFormat('en-GB', {
   weekday: 'narrow', 
 })
-
-// Maximum number of days to fetch historical data for
-// NOTE: If you increase this, make sure to play around with the font sizes so that the data fits
-const NUM_DAYS = 7;
-
-// Padding around the widget
+const NUM_DAYS = 5;
 const PADDING = 5;
-
-// Horizontal padding under the title text line
 const TITLE_TEXT_SPACING = 10;
-
-// Title text size in the widget
 const TITLE_TEXT_SIZE = 15;
-
-// Vertical padding between columns
 const VERTICAL_TEXT_SPACING = 5;
-
-// Vertical padding between columns of data grid
 const VERTICAL_DATA_GRID_SPACING = 2;
-
-// Text size
 const TEXT_SIZE = 10;
 
 /**************************************
  * Initial Setups
  *************************************/
-
-// Import Cache module
 const Cache = importModule('Cache');
 const DAILY_LOG_CACHE = new Cache(DAILY_LOG_CACHE_NAME);
-
-/**
- * Convenience function to add days to a Date.
- * 
- * @param {*} days The number of days to add
- */
 Date.prototype.addDays = function (days) {
   var date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
 };
-
-// Fetch data from DailyLogs cache
 const data = await fetchData();
 
 // Show alert with current data (if running script in app)
 if (config.runsInApp) {
   const alert = createAlert(data.dateText, data.today);
-
   const response = await alert.present();
-
   if (response === 0) {
     console.log('Cancel was pressed... doing nothing');
   } else if (response === 1) {
       console.log('Submit was pressed');
-
-      const updatedFields = [];
-      for (let i = 0; i < FIELDS.length; i++) {
+//       const updatedFields = [];
+let updatedFields = [];
+finalFields.map((field) => {
+      for (let i = 0; i < field.length; i++) {
         const value = alert.textFieldValue(i);
         updatedFields.push({
-          label: FIELDS[i].label, 
-          category: FIELDS[i].category, 
+          label: field[i].label, 
+          category: field[i].category, 
           value, 
         });
       }
+      
 
       DAILY_LOG_CACHE.write(data.dateKey, updatedFields);
       data.today = updatedFields;
       data.fields[0] = updatedFields;
-  }
-}
+  
+})}}
 
 // Create widget with data
 const widget = createWidget(data);
@@ -195,20 +149,40 @@ function createWidget(data) {
   const bottomStack = stack.addStack();
   bottomStack.layoutHorizontally();
 
-  // Field label column
-  addColumnToStack(bottomStack, [{ value: '' }]
-    .concat(FIELDS_TO_AGGREGATE
+const fieldData = FIELDS_TO_AGGREGATE
       .map(field => ({
         value: field.label, 
-        color: CATEGORY_CONFIGURATIONS[field.category].color, 
-      }))));
+        color: CATEGORY_CONFIGURATIONS[field.category].color,
+      }))
+      const fieldData2 = FIELDS_TO_AGGREGATE2
+      .map(field => ({
+        value: field.label, 
+        color: CATEGORY_CONFIGURATIONS[field.category].color,
+      }))
+      const fieldData3 = FIELDS_TO_AGGREGATE3
+      .map(field => ({
+        value: field.label, 
+        color: CATEGORY_CONFIGURATIONS[field.category].color,
+      }))
 
+  // Field label column
+  addColumnToStack(bottomStack, [{ value: '' }]
+      .concat(fieldData[0])
+      .concat(fieldData[1])
+      .concat(fieldData[2])
+      .concat(fieldData[3])
+      .concat(fieldData2[0])
+      .concat(fieldData2[1])
+      .concat(fieldData3[0])
+      .concat(fieldData3[1])
+      );
   bottomStack.addSpacer(VERTICAL_TEXT_SPACING);
 
   // Use to keep track of how many days each field was completed
   const fieldCompletionCounts = {};
   FIELDS_TO_AGGREGATE.forEach(field => fieldCompletionCounts[field.label] = 0);
-
+  FIELDS_TO_AGGREGATE2.forEach(field => fieldCompletionCounts[field.label] = 0);
+FIELDS_TO_AGGREGATE3.forEach(field => fieldCompletionCounts[field.label] = 0);
   // Collect data to format one column for each day's data
   const dataByDay = data.fields.reverse();
 
@@ -236,6 +210,25 @@ function createWidget(data) {
         columnData.push({ value: '?'});
       }
     });
+    FIELDS_TO_AGGREGATE2.forEach(field => {
+      const fieldFromDay = dayData.find(d => d.label === field.label);
+      if (fieldFromDay) {
+        columnData.push({ value: fieldFromDay.value ? '✅' : '❌' });
+        fieldCompletionCounts[fieldFromDay.label] += fieldFromDay.value ? 1 : 0;
+      } else {
+        columnData.push({ value: '?'});
+      }
+    });
+    FIELDS_TO_AGGREGATE3.forEach(field => {
+      const fieldFromDay = dayData.find(d => d.label === field.label);
+      if (fieldFromDay) {
+        columnData.push({ value: fieldFromDay.value ? '✅' : '❌' });
+        fieldCompletionCounts[fieldFromDay.label] += fieldFromDay.value ? 1 : 0;
+      } else {
+        columnData.push({ value: '?'});
+      }
+    });
+    
     
     addColumnToStack(bottomStack, columnData);
     bottomStack.addSpacer(VERTICAL_DATA_GRID_SPACING);
@@ -249,6 +242,40 @@ function createWidget(data) {
   const completionData = [{ value: ' '}];
 
   FIELDS_TO_AGGREGATE.forEach(field => {
+    const completionCount = fieldCompletionCounts[field.label];
+    let completionRate = (completionCount * 100 / data.fields.length).toFixed(0);
+
+    // Add some left padding for numbers of 1 or 2 digits
+    if (completionRate.length === 1) {
+      completionRate = '  ' + completionRate;
+    } else if (completionRate.length === 2) {
+      completionRate = ' ' + completionRate;
+    }
+
+    completionData.push({
+      value: `[${completionRate}%]`, 
+      align: 'right',
+      color: completionCount === data.fields.length ? '#66ff00' : '#ffffff',
+    });
+  });
+  FIELDS_TO_AGGREGATE2.forEach(field => {
+    const completionCount = fieldCompletionCounts[field.label];
+    let completionRate = (completionCount * 100 / data.fields.length).toFixed(0);
+
+    // Add some left padding for numbers of 1 or 2 digits
+    if (completionRate.length === 1) {
+      completionRate = '  ' + completionRate;
+    } else if (completionRate.length === 2) {
+      completionRate = ' ' + completionRate;
+    }
+
+    completionData.push({
+      value: `[${completionRate}%]`, 
+      align: 'right',
+      color: completionCount === data.fields.length ? '#66ff00' : '#ffffff',
+    });
+  });
+  FIELDS_TO_AGGREGATE3.forEach(field => {
     const completionCount = fieldCompletionCounts[field.label];
     let completionRate = (completionCount * 100 / data.fields.length).toFixed(0);
 
@@ -287,7 +314,7 @@ function addCellToColumn(column, data) {
 }
 
 function addTextToStack(stack, data) {
-  console.log(`addTextToStack, data: ${JSON.stringify(data)}`);
+//   console.log(`addTextToStack, data: ${JSON.stringify(data)}`);
   const { value, color, isBold, align } = data;
 
   const textLine = stack.addText(value);
@@ -357,11 +384,23 @@ async function fetchData() {
 }
 
 function initializeFields() {
-  return FIELDS.map((field) => ({
+  const first = FIELDS.map((field) => ({
     label: field.label,
     category: field.category,
     value: '',
   }));
+  const second = FIELDS2.map((field) => ({
+    label: field.label,
+    category: field.category,
+    value: '',
+  }));
+  const third = FIELDS3.map((field) => ({
+    label: field.label,
+    category: field.category,
+    value: '',
+  }));
+  const all = [first, second, third]
+  return all
 }
 
 function padNumber(num) {
